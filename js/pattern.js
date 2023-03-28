@@ -77,7 +77,7 @@ function windowResized() {
 
 function init() {
   if (!simStart) {
-    document.querySelector('#button').innerHTML = 'restart system';
+    document.querySelector('#button').innerHTML = 'end';
     startSound();
   }
   else {
@@ -229,8 +229,8 @@ function setup(){
 
 function draw(){
   clear();
-  background(255);
-  stroke(0, 0, 0);
+  background(0);
+  stroke(44, 255, 0);
   strokeWeight(.3);
   for (let i = 0; i < seeds.length; i++) {
     try{
