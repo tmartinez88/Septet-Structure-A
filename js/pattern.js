@@ -61,37 +61,54 @@ let pan22;
 let pan23;
 let pan24;
 let textChoice = 0;
-let texts = ["please let this not be abstract", "that it speaks to my peers and those that i respect", "falling asleep at the experimental music concert"];
+
+let dValue = 75;
 
 let isMobile = false;
 
 if(window.matchMedia("(max-width: 767px)").matches){
   isMobile = true;
-  //console.log("mobile")
 }
-
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
+document.addEventListener('DOMContentLoaded', function(event) {
+  //the event occurred
+  rangeslider = document.getElementById("slidey");
+  rangeslider.oninput = function() {
+    dValue = this.value;
+  }
+})
+
+
+let WAContext = window.AudioContext || window.webkitAudioContext;
+let context = new WAContext();
+
 function init() {
   if (!simStart) {
+    context.resume();
     document.querySelector('#button').innerHTML = 'end';
-    startSound();
-  }
-  else {
     for (x = 0; x < seeds.length; x++) {
       seeds[x].pos.x = random(width);
       seeds[x].pos.y = random(height);
     }
+    startSound();
+  }
+  else {
+    context.suspend();
+    simStart = false;
+    for (i = 0; i < 24; i++) {
+      amps[i].value = 0;
+    }
+    document.querySelector('#button').innerHTML = 'continue';
   }
 }
 
 function startSound() {
   simStart = true;
-  let WAContext = window.AudioContext || window.webkitAudioContext;
-  let context = new WAContext();
+  
   // Create gain node and connect it to audio output
   let outputNode = context.createGain();
   outputNode.connect(context.destination);
@@ -136,7 +153,9 @@ function startSound() {
       amp23 = device.parametersById.get("seedys/23/amp");
       amp24 = device.parametersById.get("seedys/24/amp");
       amps.push(amp1, amp2, amp3, amp4, amp5, amp6, amp7, amp8, amp9, amp10, amp11, amp12, amp13, amp14, amp15, amp16, amp17, amp18, amp19, amp20, amp21, amp22, amp23, amp24);
-
+      for (i = 0; i < 24; i++) {
+        amps[i].value = 0;
+      }
       pan1 = device.parametersById.get("seedys/1/pan");
       pan2 = device.parametersById.get("seedys/2/pan");
       pan3 = device.parametersById.get("seedys/3/pan");
@@ -174,28 +193,31 @@ function seed() {
   this.vel = createVector((random(1) * 2 - 1) * 1.2, (random(1) * 2 - 1) * 1.2);
   //look radius of seed (how far can it see in all directions)
   this.r = 0;
-  this.x = random(10);
-  this.y = random(10);
+  this.x = 0;
+  this.y = 0;
   //rotation stuff
   this.angle = 0;
-  this.rotDir = ((random(1) * 2) - 1) * .1;
-  //sound parameters
+  //this.rotDir = ((random(1) * 2) - 1) * .1;
   
+  //sound parameters
   this.pany = 0;
   this.ampy = 0;
+
+  this.isConnected = false;
 
   this.update = function() {
     this.pos.add(this.vel);
     //update panning
     this.pany = round(map(this.pos.x, 0, width, 0., 1.), 2);
-    this.ampy = round(map(this.pos.y, 0, height, .05, 0.), 2);
+   //this.ampy = round(map(this.pos.y, 0, height, .05, 0.), 2);
   }
 
   this.render = function () {
     push();
     translate(this.pos.x, this.pos.y);
-    rotate(this.angle);
-    this.angle = this.angle + this.rotDir;
+    //rotate(this.angle);
+    //this.angle = this.angle + this.rotDir;
+    strokeWeight(2);
     point(this.x, this.y);
     pop();
   }
@@ -212,8 +234,7 @@ function seed() {
       this.pos.y = 0;
       
     } else if (this.pos.y <= 0) {
-      this.pos.y = height;
-      
+      this.pos.y = height;  
     } 
   }
 }
@@ -222,48 +243,48 @@ function setup(){
   var canvas = createCanvas(window.innerWidth, window.innerHeight);
   canvas.id("canvas")
   //create 24 notes/particles
-  for (i = 0; i < 7; i++) {
+  for (i = 0; i < 24; i++) {
     seeds.push(new seed());
   }
+  
 }
 
 function draw(){
-  clear();
   background(0);
   stroke(44, 255, 0);
   strokeWeight(.3);
+ 
   for (let i = 0; i < seeds.length; i++) {
+    
+     seeds[i].isConnected = false;
     try{
       for (x = 0; x < seeds.length; x++)
       {
         if (x !== i && simStart)
         {
-          //awareness
+          //distance between particles
+          d = round(dist(seeds[i].pos.x, seeds[i].pos.y, seeds[x].pos.x, seeds[x].pos.y), 2);
           
-          //d = round(dist(seeds[i].pos.x, seeds[i].pos.y, seeds[x].pos.x, seeds[x].pos.y), 2);
-          d = 10;
-          if (d < 200)
+          if (d < dValue)
           {
-            if (amps[i].value != .05) {
-              //amps[i].value = .05;
-              
-            }
-            
-            
+            seeds[i].isConnected = true;
             line(seeds[i].pos.x, seeds[i].pos.y, seeds[x].pos.x, seeds[x].pos.y);
+            amps[i].value = 0.05;
           }
-          else if (d > 250)
-          {
-            //amps[i].value = 0.;
+          if (seeds[i].isConnected == false) {
+            amps[i].value = 0.0;
           }
         }
       }
       pans[i].value = seeds[i].pany;
-      amps[i].value = seeds[i].ampy;
+      //amps[i].value = seeds[i].ampy;
+      
     }
+    
     catch(error){}
     seeds[i].render();
     seeds[i].update();
     seeds[i].edges();
+    
   }
 }

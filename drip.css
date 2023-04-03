@@ -11,7 +11,7 @@ html, body{
 #button {
   position:absolute;
   font-family: serif;
-  margin-left: 8px;
+  margin-left: 15px;
   margin-right: 20px;
   border-style: solid;
   border-width: .5px;
@@ -22,5 +22,51 @@ html, body{
   text-align: center;
   font-size: calc(14px + 0vw);
   border-radius:15px;
+  border-width:1px;
   color:white;
+  width:100px;
+  box-shadow:1px 1px 12px red;
 }
+
+.slider {
+  -webkit-appearance: none;
+  position:absolute;
+  font-family: serif;
+  margin-left: 15px;
+  margin-right: 20px;
+  border-style: solid;
+  border-width: .5px;
+  border-color: white;
+  margin-top: 20px;
+  background-color: transparent;
+  padding: 5px 15px;
+  top: 40px;
+  width:100px;
+  height: 15px;
+  border-width:1px;
+  outline: 1px;
+  opacity: 0.7;
+  border-radius: 15px;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  box-shadow:2px 2px 12px blue;
+}
+
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: pink;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  background: pink;
+  cursor: pointer;
+}
+
