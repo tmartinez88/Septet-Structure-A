@@ -1,6 +1,7 @@
 //by Tommy, 2022
 //www.thomasjohnmartinez.com
 
+//container for seeds
 let seeds = [];
 let clock;
 let amps = [];
@@ -60,7 +61,7 @@ let pan21;
 let pan22;
 let pan23;
 let pan24;
-let textChoice = 0;
+
 
 let dValue = 75;
 
@@ -90,6 +91,7 @@ function init() {
   if (!simStart) {
     context.resume();
     document.querySelector('#button').innerHTML = 'end';
+    //runs some number of times
     for (x = 0; x < seeds.length; x++) {
       seeds[x].pos.x = random(width);
       seeds[x].pos.y = random(height);
@@ -153,7 +155,7 @@ function startSound() {
       amp23 = device.parametersById.get("seedys/23/amp");
       amp24 = device.parametersById.get("seedys/24/amp");
       amps.push(amp1, amp2, amp3, amp4, amp5, amp6, amp7, amp8, amp9, amp10, amp11, amp12, amp13, amp14, amp15, amp16, amp17, amp18, amp19, amp20, amp21, amp22, amp23, amp24);
-      for (i = 0; i < 24; i++) {
+      for (i = 0; i < seeds.length; i++) {
         amps[i].value = 0;
       }
       pan1 = device.parametersById.get("seedys/1/pan");
@@ -221,7 +223,7 @@ function seed() {
     point(this.x, this.y);
     pop();
   }
-
+  //asteroids 
   this.edges = function () {
     if (this.pos.x > width) {
       this.pos.x = 0;
@@ -246,7 +248,6 @@ function setup(){
   for (i = 0; i < 24; i++) {
     seeds.push(new seed());
   }
-  
 }
 
 function draw(){
@@ -255,7 +256,6 @@ function draw(){
   strokeWeight(.3);
  
   for (let i = 0; i < seeds.length; i++) {
-    
      seeds[i].isConnected = false;
     try{
       for (x = 0; x < seeds.length; x++)
@@ -272,7 +272,7 @@ function draw(){
             amps[i].value = 0.05;
           }
           if (seeds[i].isConnected == false) {
-            amps[i].value = 0.0;
+            amps.value = 0.0;
           }
         }
       }

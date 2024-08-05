@@ -1,2 +1,2 @@
-# strangeCoincidence
- A generative audio visual sound composition for the web.
+# 24 Voices
+ A generative audio visual sound composition.
